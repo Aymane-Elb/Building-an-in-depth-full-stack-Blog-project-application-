@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import articleContent from "./article-content";
-import Articles from "../components/Articles";
+import Articles from "../components/Articles.js";
 import NotFound from "./NotFound";
 import CommentsList from "../components/CommentsList";
 import AddCommetForm from "../components/AddCommentForm";

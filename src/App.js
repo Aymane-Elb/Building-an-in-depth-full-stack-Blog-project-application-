@@ -1,10 +1,11 @@
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-// Pages
+import React from "react";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import ArticlesList from "./pages/ArticlesList";
 import Article from "./pages/Article";
 import NotFound from "./pages/NotFound";
+import Login from "./components/Login";
 
 // Components
 import NavBar from "./components/NavBar";
@@ -19,6 +20,7 @@ function App() {
           <Route exact path='/about' component={About} />
           <Route exact path='/articles-list' component={ArticlesList} />
           <Route exact path='/article/:name' component={Article} />
+          <Route exact path='/Login' component={Login} />
           <Route component={NotFound} />
         </Switch>
       </div>
