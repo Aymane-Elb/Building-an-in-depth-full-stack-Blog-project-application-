@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
 export default function Login() {
   return (
@@ -26,7 +27,7 @@ export default function Login() {
           </div>
           <button
             type="submit"
-            className="w-full bg-green-400 text-white py-3 rounded-lg hover:bg-green-700 transition duration-300"
+            className="w-full bg-black text-white py-3 rounded-lg hover:bg-white text-black transition duration-300"
           >
             Login
           </button>
