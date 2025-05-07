@@ -4,31 +4,75 @@ import Footer from "../components/Footer";
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen w-screen overflow-x-hidden">
-      {/* Hero Section */}
-      <div className="flex flex-col items-center justify-center py-16 px-6 text-center bg-white w-full">
-        <h1 className="text-4xl font-bold mb-4">
-          Signalez un Problème Urbain
-        </h1>
-        <p className="text-xl text-gray-700 mb-8 max-w-2xl mx-auto">
-          Améliorons notre ville ensemble. Signalez facilement les incidents en un clic.
-        </p>
-        <div className="flex flex-wrap justify-center gap-6 mb-10">
-          <GsapButton text="Commencer" darkMode={true}/>
-          <GsapButton text="En savoir plus" darkMode={true} />
+    <div className="flex flex-col min-h-screen w-full overflow-x-hidden">
+
+      <div className="w-full bg-white text-black text-center py-20 px-4">
+        <h1 className="text-5xl md:text-7xl font-semibold mb-2">UrbanSignal</h1>
+        <p className="text-xl md:text-2xl font-light mb-6">La voix des citoyens. En temps réel.</p>
+        
+        <div className="flex justify-center items-center space-x-4 mb-10">
+          <GsapButton text={'Commencer'} darkMode={true}   />
+          <GsapButton text={'En savoir plus'}  darkMode={true}   />
         </div>
-        {/* Product image */}
-        <div className="w-full max-w-4xl mx-auto">
+        
+        <div className="w-full mx-auto mt-8 relative">
           <img
             src="/images/blog1.jpg"
-            alt="une urbaine"
-            className="w-full h-auto"
+            alt="Plateforme UrbanSignal"
+            className="w-screen h-screen rounded-lg shadow-xl"
           />
+          {/* PRO text effect like Apple */}
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <h2 className="text-8xl md:text-9xl font-bold tracking-tight opacity-20">PRO</h2>
+          </div>
+        </div>
+        <div className="w-full mx-auto mt-8 relative">
+          <img
+            src="/images/blog1.jpg"
+            alt="Plateforme UrbanSignal"
+            className="w-screen h-screen rounded-lg shadow-xl"
+          />
+          {/* PRO text effect like Apple */}
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <h2 className="text-8xl md:text-9xl font-bold tracking-tight opacity-20">PRO</h2>
+          </div>
         </div>
       </div>
-      
-      {/* Wave divider section - Fixed */}
-      <div className="relative w-full h-64 bg-gradient-to-r from-pink-500 via-red-500 to-pink-500 overflow-hidden">
+
+
+      {/* Product Showcase Section - Split Layout */}
+      <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-2 bg-white m-2">
+        {/* Left Section - Dark */}
+        <div className="bg-black text-white text-center py-16 px-8">
+          <h2 className="text-3xl md:text-4xl font-semibold mb-1">Carte Interactive</h2>
+          <p className="text-lg font-light mb-4">Impossibly fine. Incredibly powerful.</p>
+          <GsapButton text={'Reportez'} darkMode={false} />
+          <div className="w-full max-w-md mx-auto mt-4">
+            <img
+              src="/images/blog1.jpg"
+              alt="Carte interactive"
+              className="w-full h-auto rounded-lg"
+            />
+          </div>
+        </div>
+        
+        {/* Right Section - Light */}
+        <div className="bg-gray-100 text-black text-center py-16 px-8">
+          <h2 className="text-3xl md:text-4xl font-semibold mb-1">Signalement <span className="text-gray-500">rapide</span></h2>
+          <p className="text-lg font-light mb-4">Votre idée. Notre solution. Ensemble.</p>
+          <GsapButton text={'Signalez votre probleme'} darkMode={true} />
+          <div className="w-full max-w-md mx-auto mt-4">
+            <img
+              src="/images/blog1.jpg"
+              alt="Signalement rapide"
+              className="w-full h-auto rounded-lg"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Wave divider section */}
+      <div className="relative w-full h-64 bg-white overflow-hidden">
         {/* Background image layer */}
         <div className="absolute inset-0 opacity-20">
           <img
@@ -37,34 +81,12 @@ export default function Home() {
             className="w-full h-full object-cover"
           />
         </div>
-        {/* SVG Wave - Fixed */}
-        <svg
-          className="absolute bottom-0 left-0 w-full"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 1200 120"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
-            fill="white"
-            className="opacity-30"
-          ></path>
-        </svg>
-        {/* Center image */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-10">
-          <img
-            src="/images/blog1.jpg"
-            alt="Decorative element"
-            className="w-full h-full object-cover"
-          />
+        {/* SVG Wave */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <h2 className="text-4xl md:text-6xl font-bold text-black text-center">Ensemble pour notre ville</h2>
         </div>
       </div>
-      
-      {/* Add flex-grow to push footer to bottom */}
-      <div className="flex-grow"></div>
-      
-      {/* Footer */}
-      <Footer />
+      <Footer/>
     </div>
   );
 }

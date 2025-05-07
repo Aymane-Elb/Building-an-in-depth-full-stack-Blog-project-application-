@@ -5,7 +5,7 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
   
   return (
-    <footer className="bg-gray-800 text-white w-full">
+    <footer className="bg-yellow-50 text-black w-full m-2">
       <div className="w-full flex flex-col lg:flex-row justify-between px-6 py-8">
         {/* Logo and Company Description */}
         <div className="mb-6 lg:mb-0 max-w-md">
@@ -17,14 +17,14 @@ const Footer = () => {
             />
             <h3 className="text-xl font-bold">Your Company</h3>
           </div>
-          <p className="text-gray-400">
+          <p className="text-black">
             Committed to providing excellent service and solutions for our community.
           </p>
         </div>
 
         {/* Quick Links */}
         <div className="mb-6 lg:mb-0">
-          <h4 className="text-lg font-semibold mb-3 border-b border-gray-700 pb-1">Quick Links</h4>
+          <h4 className="text-lg font-semibold mb-3 mr-14 border-b border-gray-700 pb-1 text-yellow-600">Quick Links</h4>
           <ul>
             <li className="mb-2 hover:text-yellow-400 transition duration-200">
               <Link to="/" className="inline-block">Accueil</Link>
