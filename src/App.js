@@ -1,29 +1,34 @@
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import React from "react";
-import Home from "./pages/Home";
-import About from "./pages/About";
-import ArticlesList from "./pages/ArticlesList";
-import Article from "./pages/Article";
-import NotFound from "./pages/NotFound";
-import Login from "./components/Login";
+import Home from "./frontend/pages/Home";
+import About from "./frontend/pages/About";
+import ArticlesList from "./frontend/pages/ArticlesList";
+import Article from "./frontend/pages/Article";
+import NotFound from "./frontend/pages/NotFound";
+import NavBar from "./frontend/components/NavBar";
+import CreateAccount from "./frontend/pages/CreateAccount";
+import Signalez from "./frontend/pages/Signalez";
+import Login from "./frontend/components/Login";
+import 'leaflet/dist/leaflet.css'
+import LocationPicker from "./frontend/components/LocationPicker";
 
-// Components
-import NavBar from "./components/NavBar";
+
+
 
 function App() {
   return (
     <Router>
       <NavBar />
-      <div className='max-w-screen-md mx-auto pt-20'>
-        <Switch>
-          <Route exact path='/' component={Home} />
-          <Route exact path='/about' component={About} />
-          <Route exact path='/articles-list' component={ArticlesList} />
-          <Route exact path='/article/:name' component={Article} />
-          <Route exact path='/Login' component={Login} />
-          <Route component={NotFound} />
-        </Switch>
-      </div>
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/About' element={<About />} />
+          <Route path='/articles-list' element={<ArticlesList />} />
+          <Route path='/article/:name' element={<Article />} />
+          <Route path='/CreateAccount' element={<CreateAccount />} />
+          <Route path='/Signalez' element={<Signalez/>} />
+          <Route path='/LocationPicker' element={<LocationPicker/>} />
+          <Route path='*' element={<NotFound />} />
+        </Routes>
     </Router>
   );
 }
