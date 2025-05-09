@@ -2,15 +2,17 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import React from "react";
 import Home from "./frontend/pages/Home";
 import About from "./frontend/pages/About";
-import ArticlesList from "./frontend/pages/ArticlesList";
-import Article from "./frontend/pages/Article";
 import NotFound from "./frontend/pages/NotFound";
 import NavBar from "./frontend/components/NavBar";
 import CreateAccount from "./frontend/pages/CreateAccount";
 import Signalez from "./frontend/pages/Signalez";
+import UrbanIssuesPage from './frontend/pages/UrbanIssuesPage';
 import Login from "./frontend/components/Login";
 import 'leaflet/dist/leaflet.css'
 import LocationPicker from "./frontend/components/LocationPicker";
+import UrbanIssueCard from "./frontend/components/UrbanIssueCard";
+import IssueFilters from "./frontend/components/IssueFilers";
+import mockUrbanIssues from "./frontend/components/mockUrbanIssues";
 
 
 
@@ -22,11 +24,13 @@ function App() {
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/About' element={<About />} />
-          <Route path='/articles-list' element={<ArticlesList />} />
-          <Route path='/article/:name' element={<Article />} />
           <Route path='/CreateAccount' element={<CreateAccount />} />
           <Route path='/Signalez' element={<Signalez/>} />
           <Route path='/LocationPicker' element={<LocationPicker/>} />
+          <Route path='/UrbanIssuesPage' element={<UrbanIssuesPage/>} />
+          <Route path='/UrbanIssueCard' element={<UrbanIssueCard/>} />
+          <Route path='/IssueFilters' element={<IssueFilters/>} />
+          <Route path='/mockUrbanIssues' element={<mockUrbanIssues/>} />
           <Route path='*' element={<NotFound />} />
         </Routes>
     </Router>

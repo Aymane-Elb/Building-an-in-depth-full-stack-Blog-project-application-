@@ -27,7 +27,7 @@ const NavBar = () => {
             </Link>
           </li>
           <li className="inline-block pt-4 pb-4 font-bold hover:text-yellow-500 relative group">
-            <Link to="/articles-list" className="px-4 relative">
+            <Link to="/UrbanIssuesPage" className="px-4 relative">
               Reports
               <span className="absolute left-0 bottom-0 w-full h-0.5 bg-white scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-left"></span>
             </Link>
@@ -43,7 +43,7 @@ const NavBar = () => {
             onMouseLeave={() => setShowLoginForm(false)}>
           <GsapButton text="Login/Create Account" darkMode={true} onClick={()=>setShowLoginForm(true)}/>
           {showLoginForm && (
-            <div className="absolute top-full right-0 bg-black bg-opacity-95 text-white rounded shadow-lg z-51 flex flex-row w-max">
+            <div className="absolute top-full right-0 bg-white bg-opacity-95 text-black rounded shadow-lg z-51 flex flex-row w-max">
               {/* Left side - Sign In */}
               <div className="w-64 p-6 border-r border-gray-700">
                 <h2 className="text-lg font-bold mb-4">Sign In</h2>
@@ -63,10 +63,10 @@ const NavBar = () => {
                     />
                   </div>
                   <div className="flex justify-between items-center">
-                    <GsapButton text="Login" darkMode={false} />
+                    <GsapButton text="Login" darkMode={true} />
                   </div>
                   <div className="flex flex-nowrap mt-4">
-                    <a href="/Login.js" className="text-xs text-gray-400 hover:text-white">Forgot your password?</a>
+                    <a href="/Login.js" className="text-xs text-black hover:text-yellow-500">Forgot your password?</a>
                   </div>
                 </form>
               </div>
@@ -93,7 +93,7 @@ const NavBar = () => {
                   </li>
                 </ul>
                 <div>
-                  <GsapButton text="Create an Account" darkMode={false} to="../frontend/pages/CreateAccount" />
+                  <GsapButton text="Create an Account" darkMode={true} to="../frontend/pages/CreateAccount" />
                 </div>
               </div>
             </div>
