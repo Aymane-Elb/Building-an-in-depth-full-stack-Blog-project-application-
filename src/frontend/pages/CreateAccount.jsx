@@ -11,34 +11,34 @@ const CreateAccount = () => {
   };
   
   return (
-    <div className="max-w-md mx-auto bg-white p-10 rounded-2xl shadow-2xl mt-10">
-      <h2 className="text-3xl font-bold mb-8 text-center text-black">Create Account</h2>
+    <div className="sticky max-w-md mx-auto bg-white p-10 item-center justify-center rounded-2xl shadow-2xl mt-20">
+      <h2 className="text-3xl font-black mb-8 text-center text-black">Create Account</h2>
       <div className="space-y-6">
         <div className="flex flex-col">
-          <label className="text-sm font-semibold text-black mb-1">Full Name</label>
+          <label className="text-sm font-normal text-black mb-1">Full Name</label>
           <input
             type="text"
             placeholder="Si Hmed"
-            className="bg-transparent focus:outline-none focus:border-blue-300 border border-yellow-300 rounded-md py-2 px-3 text-yellow-300 font-bold focus:ring-2 focus:ring-blue-400"
+            className="bg-transparent focus:outline-none border border-yellow-300 rounded-md py-2 px-3 text-black font-black focus:ring-2 focus:ring-yellow-400"
           />
         </div>
         
         <div className="flex flex-col">
-          <label className="text-sm font-semibold text-black mb-1">Email Address</label>
+          <label className="text-sm font-normal text-black mb-1">Email Address</label>
           <input
             type="email"
             placeholder="example@email.com"
-            className="bg-transparent focus:outline-none focus:border-blue-300 border border-yellow-300 rounded-md py-2 px-3 text-yellow-300 font-bold focus:ring-2 focus:ring-blue-400"
+            className="bg-transparent focus:outline-none  border border-yellow-300 rounded-md py-2 px-3 text-black font-black focus:ring-2 focus:ring-yellow-400"
           />
         </div>
         
         <div className="flex flex-col relative">
-          <label className="text-sm font-semibold text-black mb-1">Password</label>
+          <label className="text-sm font-normal text-black mb-1">Password</label>
           <div className="relative">
             <input
               type={showPassword ? 'text' : 'password'}
               placeholder="********"
-              className="w-full bg-transparent focus:outline-none focus:border-blue-300 border border-yellow-300 rounded-md py-2 px-3 text-yellow-300 font-bold focus:ring-2 focus:ring-blue-400"
+              className="w-full bg-transparent focus:outline-none focus:border-yellow-300 border border-yellow-300 rounded-md py-2 px-3 text-yellow-300 font-black focus:ring-2 focus:ring-yellow-400"
             />
             <button
               type="button"
@@ -51,11 +51,11 @@ const CreateAccount = () => {
         </div>
         
         <div className="flex flex-col">
-          <label className="text-sm font-semibold text-black mb-1">Phone Number</label>
+          <label className="text-sm font-normal text-black mb-1">Phone Number</label>
           <input
             type="tel"
             placeholder="+123456789"
-            className="bg-transparent focus:outline-none focus:border-blue-300 border border-yellow-300 rounded-md py-2 px-3 text-yellow-300 focus:ring-2 focus:ring-blue-400"
+            className="bg-transparent focus:outline-none  border border-yellow-300 rounded-md py-2 px-3 text-black font-black focus:ring-2 focus:ring-yellow-400"
           />
         </div>
         

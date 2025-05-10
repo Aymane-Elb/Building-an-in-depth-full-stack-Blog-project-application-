@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import GsapButton from "./GsapButton";
+import { Navigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import Signalez from "../pages/Signalez";
 import CreateAccount from "../pages/CreateAccount";
 
 const NavBar = () => {
   const [showLoginForm, setShowLoginForm] = useState(false);
+  const navigate = useNavigate();
   
   return (
     <nav className="bg-nav-bar w-screen sticky top-0 z-50 text-nav-tex-color px-6 py-2 flex items-center justify-between">
@@ -22,7 +25,7 @@ const NavBar = () => {
           </li>
           <li className="inline-block pt-4 pb-4 font-bold hover:text-yellow-500 relative group">
             <Link to="/Signalez" className="px-4 relative">
-            Report a Problem
+            Signalez
               <span className="absolute left-0 bottom-0 w-full h-0.5 bg-white scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-left"></span>
             </Link>
           </li>
@@ -41,7 +44,7 @@ const NavBar = () => {
             onMouseEnter={() => setShowLoginForm(true)}
             onClick={() => setShowLoginForm(true)}
             onMouseLeave={() => setShowLoginForm(false)}>
-          <GsapButton text="Login/Create Account" darkMode={true} onClick={()=>setShowLoginForm(true)}/>
+          <GsapButton text="Authenticate / Register" darkMode={true} onClick={()=>setShowLoginForm(true)}/>
           {showLoginForm && (
             <div className="absolute top-full right-0 bg-white bg-opacity-95 text-black rounded shadow-lg z-51 flex flex-row w-max">
               {/* Left side - Sign In */}
@@ -66,7 +69,7 @@ const NavBar = () => {
                     <GsapButton text="Login" darkMode={true} />
                   </div>
                   <div className="flex flex-nowrap mt-4">
-                    <a href="/Login.js" className="text-xs text-black hover:text-yellow-500">Forgot your password?</a>
+                    <a href="/ForgetPasswd" className="text-xs text-black hover:text-yellow-500">Forgot your password?</a>
                   </div>
                 </form>
               </div>
@@ -93,7 +96,7 @@ const NavBar = () => {
                   </li>
                 </ul>
                 <div>
-                  <GsapButton text="Create an Account" darkMode={true} to="../frontend/pages/CreateAccount" />
+                  <GsapButton text="Create an Account" darkMode={true} to='/CreateAccount'  />
                 </div>
               </div>
             </div>

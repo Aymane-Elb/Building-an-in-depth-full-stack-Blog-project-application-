@@ -6,6 +6,7 @@ import NotFound from "./frontend/pages/NotFound";
 import NavBar from "./frontend/components/NavBar";
 import CreateAccount from "./frontend/pages/CreateAccount";
 import Signalez from "./frontend/pages/Signalez";
+import ForgetPasswd from "./frontend/pages/ForgetPasswd";
 import UrbanIssuesPage from './frontend/pages/UrbanIssuesPage';
 import Login from "./frontend/components/Login";
 import 'leaflet/dist/leaflet.css'
@@ -24,11 +25,12 @@ function App() {
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/About' element={<About />} />
-          <Route path='/CreateAccount' element={<CreateAccount />} />
+          <Route path='/CreateAccount' element={<CreateAccount/>} />
           <Route path='/Signalez' element={<Signalez/>} />
           <Route path='/LocationPicker' element={<LocationPicker/>} />
           <Route path='/UrbanIssuesPage' element={<UrbanIssuesPage/>} />
           <Route path='/UrbanIssueCard' element={<UrbanIssueCard/>} />
+          <Route path='/ForgetPasswd' element={<ForgetPasswd/>} />
           <Route path='/IssueFilters' element={<IssueFilters/>} />
           <Route path='/mockUrbanIssues' element={<mockUrbanIssues/>} />
           <Route path='*' element={<NotFound />} />
