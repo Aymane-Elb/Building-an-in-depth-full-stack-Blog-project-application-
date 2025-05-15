@@ -11,13 +11,13 @@ export default function Home() {
         <p className="text-xl md:text-2xl font-light mb-6">La voix des citoyens. En temps réel.</p>
         
         <div className="flex justify-center items-center space-x-4 mb-10">
-          <GsapButton text={'Commencer'} darkMode={true}   />
-          <GsapButton text={'En savoir plus'}  darkMode={true}   />
+          <GsapButton text={'Commencer'} darkMode={true} to={'/Signalez'}  />
+          <GsapButton text={'En savoir plus'}  darkMode={true}   to={'/About'} />
         </div>
         
         <div className="w-full mx-auto mt-8 relative">
           <img
-            src="/images/blog1.jpg"
+            src="/images/urbain1.jpg"
             alt="Plateforme UrbanSignal"
             className="w-screen h-screen rounded-lg shadow-xl"
           />
@@ -28,7 +28,7 @@ export default function Home() {
         </div>
         <div className="w-full mx-auto mt-8 relative">
           <img
-            src="/images/blog1.jpg"
+            src="/images/urbain2.jpg"
             alt="Plateforme UrbanSignal"
             className="w-screen h-screen rounded-lg shadow-xl"
           />
@@ -46,10 +46,10 @@ export default function Home() {
         <div className="bg-black text-white text-center py-16 px-8">
           <h2 className="text-3xl md:text-4xl font-semibold mb-1">Carte Interactive</h2>
           <p className="text-lg font-light mb-4">Impossibly fine. Incredibly powerful.</p>
-          <GsapButton text={'Reportez'} darkMode={false} />
+          <GsapButton text={'Reportez'} darkMode={false} to={'/Signalez'}/>
           <div className="w-full max-w-md mx-auto mt-4">
             <img
-              src="/images/blog1.jpg"
+              src="/images/urbain1.jpg"
               alt="Carte interactive"
               className="w-full h-auto rounded-lg"
             />
@@ -60,10 +60,10 @@ export default function Home() {
         <div className="bg-gray-100 text-black text-center py-16 px-8">
           <h2 className="text-3xl md:text-4xl font-semibold mb-1">Signalement <span className="text-gray-500">rapide</span></h2>
           <p className="text-lg font-light mb-4">Votre idée. Notre solution. Ensemble.</p>
-          <GsapButton text={'Signalez votre probleme'} darkMode={true} />
+          <GsapButton text={'Signalez votre probleme'} darkMode={true} to={'/Signalez'}/>
           <div className="w-full max-w-md mx-auto mt-4">
             <img
-              src="/images/blog1.jpg"
+              src="/images/urbain2.jpg"
               alt="Signalement rapide"
               className="w-full h-auto rounded-lg"
             />

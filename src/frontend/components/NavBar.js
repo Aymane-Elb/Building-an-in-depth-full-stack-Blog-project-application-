@@ -35,6 +35,12 @@ const NavBar = () => {
               <span className="absolute left-0 bottom-0 w-full h-0.5 bg-white scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-left"></span>
             </Link>
           </li>
+          <li className="inline-block pt-4 pb-4 font-bold hover:text-yellow-500 relative group">
+            <Link to="/UrbanIssuesPage" className="px-4 relative">
+              About us
+              <span className="absolute left-0 bottom-0 w-full h-0.5 bg-white scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-left"></span>
+            </Link>
+          </li>
         </ul>
       </div>
       
@@ -55,14 +61,14 @@ const NavBar = () => {
                     <input 
                       type="email" 
                       placeholder="Email Address" 
-                      className="w-full p-2 bg-transparent border-b border-gray-600 focus:outline-none focus:border-white text-sm"
+                      className="w-full p-2 bg-transparent border-b border-gray-600 focus:outline-none focus:border-yellow-400 text-sm"
                     />
                   </div>
                   <div className="mb-6">
                     <input 
                       type="password" 
                       placeholder="Password" 
-                      className="w-full p-2 bg-transparent border-b border-gray-600 focus:outline-none focus:border-white text-sm"
+                      className="w-full p-2 bg-transparent border-b border-gray-600 focus:outline-none focus:border-yellow-400 text-sm"
                     />
                   </div>
                   <div className="flex justify-between items-center">
