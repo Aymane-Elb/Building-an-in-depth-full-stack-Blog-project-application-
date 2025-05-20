@@ -11,10 +11,10 @@ const NavBar = () => {
   const navigate = useNavigate();
   
   return (
-    <nav className="bg-nav-bar w-screen sticky top-0 z-50 text-nav-tex-color px-6 py-2 flex items-center justify-between">
+    <nav className="bg-nav-bar w-screen sticky top-0 z-50 text-nav-tex-color px-6 py-2 flex items-center justify-between ">
       {/* Left side - Logo and main navigation links */}
       <div className="flex items-center">
-        <img src="/images/logo.jpeg" alt="website logo" className="h-full w-12 m-0 rounded-md" />
+        <img src="/images/logo.jpeg" alt="website logo" className="h-full w-14 mr-2" />
         
         <ul className="flex ml-6">
           <li className="inline-block pt-4 pb-4 font-bold hover:text-yellow-500 relative group">
@@ -36,7 +36,7 @@ const NavBar = () => {
             </Link>
           </li>
           <li className="inline-block pt-4 pb-4 font-bold hover:text-yellow-500 relative group">
-            <Link to="/UrbanIssuesPage" className="px-4 relative">
+            <Link to="/About" className="px-4 relative">
               About us
               <span className="absolute left-0 bottom-0 w-full h-0.5 bg-white scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-left"></span>
             </Link>
