@@ -1,10 +1,11 @@
 {
-  "name":"signalez_moi",
+  "name": "signalez_moi",
   "version": "1.0.0",
   "description": "Just a blog for the countie",
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
-    "server": "nodemon server.js"
+    "server": "nodemon server.js",
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
@@ -17,5 +18,19 @@
   "bugs": {
     "url": "https://github.com/Aymane-Elb/Building-an-in-depth-full-stack-Blog-project-application-/issues"
   },
-  "homepage": "https://github.com/Aymane-Elb/Building-an-in-depth-full-stack-Blog-project-application-#readme"
+  "homepage": "https://github.com/Aymane-Elb/Building-an-in-depth-full-stack-Blog-project-application-#readme",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cloudinary": "^2.6.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.16.0",
+    "mongoose": "^8.15.0",
+    "multer": "^2.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
 }

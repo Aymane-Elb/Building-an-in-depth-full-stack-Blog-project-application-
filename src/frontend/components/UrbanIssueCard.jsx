@@ -64,7 +64,7 @@ const UrbanIssueCard = ({ issue }) => {
           </p>
           
           <div className="flex items-center flex-wrap mt-auto pt-3 border-t border-gray-200">
-            <a className="text-indigo-500 inline-flex items-center md:mb-2 lg:mb-0 cursor-pointer hover:text-indigo-600" >
+            <a className="text-indigo-500 inline-flex items-center md:mb-2 lg:mb-0 cursor-pointer hover:text-indigo-600" href='/issues/${api}'>
               Voir détails
               <svg className="w-4 h-4 ml-2" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M5 12h14"></path>

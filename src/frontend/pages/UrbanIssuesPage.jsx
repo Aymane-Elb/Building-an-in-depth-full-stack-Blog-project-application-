@@ -1,4 +1,3 @@
-// Fichier: src/pages/UrbanIssuesPage.jsx
 import React, { useState, useEffect } from 'react';
 import UrbanIssueCard from '../components/UrbanIssueCard';
 import IssueFilters from '../components/IssueFilers';
