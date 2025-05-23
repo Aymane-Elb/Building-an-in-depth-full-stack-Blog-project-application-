@@ -8,7 +8,8 @@ function GsapButton({
   to = null, 
   onClick = null, 
   className = "",
-  disabled = false
+  disabled = false,
+  type="button"
 }) {
   const [isHovered, setIsHovered] = useState(false);
   const [mouseEnterPosition, setMouseEnterPosition] = useState(null);
@@ -61,7 +62,7 @@ function GsapButton({
       onClick={handleClick}
       disabled={disabled}
       aria-disabled={disabled}
-      type="button"
+      type={type}
     >
       {/* Background animation overlay */}
       <span
@@ -86,7 +87,8 @@ GsapButton.propTypes = {
   to: PropTypes.string,
   onClick: PropTypes.func,
   className: PropTypes.string,
-  disabled: PropTypes.bool
+  disabled: PropTypes.bool,
+  type: PropTypes.oneOf(['button', 'submit', 'reset'])
 };
 
 // Utilisation de memo pour éviter les rendus inutiles

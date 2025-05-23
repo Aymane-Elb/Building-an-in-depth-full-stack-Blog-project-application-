@@ -1,65 +1,82 @@
-import "whatwg-fetch"; // Make sure this is imported if you need fetch polyfill for older browsers
+import "whatwg-fetch";
 import React, { useCallback, useState } from 'react';
 import GsapButton from '../components/GsapButton';
 import LocationPicker from '../components/LocationPicker';
 import Footer from '../components/Footer';
 
 const Signalez = () => {
-  // State for form fields
-  const [fullName, setFullName] = useState(''); // Added for 'Full Name' input
+  // Form field states
+  const [fullName, setFullName] = useState('');
   const [city, setCity] = useState('');
-  const [problemType, setProblemType] = useState(''); // Added for 'Problem Type' input (maps to 'category' in backend)
-  const [description, setDescription] = useState(''); // Added for 'Description' textarea
-  const [image, setImage] = useState(null); // Added for 'Photo' file input
+  const [problemType, setProblemType] = useState('');
+  const [description, setDescription] = useState('');
+  const [image, setImage] = useState(null);
 
+  // Location state from LocationPicker
   const [location, setLocation] = useState({ lat: null, lng: null });
+
+  // UI state for feedback
+  const [isLoading, setIsLoading] = useState(false); // New: Tracks submission status
+  const [successMessage, setSuccessMessage] = useState(''); // New: For successful submissions
+  const [errorMessage, setErrorMessage] = useState('');     // New: For displaying errors
 
   // Callback for LocationPicker to update location and city
   const handleLocationChange = useCallback(({ lat, lng, address }) => {
     setLocation({ lat, lng });
-    setCity(address); // Set city from LocationPicker's address if available
+    setCity(address);
   }, []);
 
   // Handler for file input change
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
-      setImage(e.target.files[0]); // Capture the selected file
+      setImage(e.target.files[0]);
     }
   };
 
   // Main form submission handler
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default browser form submission
+    e.preventDefault();
 
-    // Create FormData object to send text fields and files
+    // Clear previous messages
+    setSuccessMessage('');
+    setErrorMessage('');
+
+    // Input validation (client-side - add more as needed)
+    if (!fullName || !city || !problemType || !description) {
+        setErrorMessage('Please fill in all required text fields.');
+        return;
+    }
+    if (location.lat === null || location.lng === null) {
+        setErrorMessage('Please select a location on the map.');
+        return;
+    }
+    // If you always require an image:
+    // if (!image) {
+    //     setErrorMessage('Please upload an image for the report.');
+    //     return;
+    // }
+
+    setIsLoading(true); // Start loading state
+
     const formData = new FormData();
-
-    // Append text fields
-    // Note: 'fullName' is not directly used in the backend Report model,
-    // but you can append it if your backend will process it differently
-    // or if you plan to add it to the User model.
-    // For now, the report is associated with the logged-in user via req.user._id.
-    // formData.append('fullName', fullName);
-
-    formData.append('city', city); // City from LocationPicker/input
-    formData.append('problemType', problemType); // Maps to 'category' in backend
+    formData.append('fullName', fullName); // Still appending for potential future use or debugging
+    formData.append('city', city);
+    formData.append('problemType', problemType);
     formData.append('description', description);
 
-    // Append location coordinates as a JSON string
     if (location.lat !== null && location.lng !== null) {
       formData.append('location', JSON.stringify({ lat: location.lat, lng: location.lng }));
     }
 
-    // Append the image file if selected
     if (image) {
-      formData.append('images', image); // 'images' matches the field name in upload.array('images', 3)
+      formData.append('images', image);
     }
 
-    // Get JWT token from localStorage (assuming it's stored there after login)
-    const token = localStorage.getItem('token'); // Adjust this if you store token elsewhere
+    const token = localStorage.getItem('token');
 
     if (!token) {
-      alert('You must be logged in to submit a report.');
+      setErrorMessage('You must be logged in to submit a report.');
+      setIsLoading(false); // Stop loading if not logged in
       return;
     }
 
@@ -68,35 +85,35 @@ const Signalez = () => {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
-          // Important: DO NOT set 'Content-Type': 'multipart/form-data' here.
-          // Fetch will automatically set it correctly with the boundary when using FormData.
         },
         body: formData,
       });
 
       if (!response.ok) {
-        // Parse error message from backend
         const errorData = await response.json();
+        // Use backend error message if available, otherwise a generic one
         throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
       }
 
       const result = await response.json();
       console.log('Report submitted successfully:', result);
-      alert('Report submitted successfully!');
+      setSuccessMessage('Report submitted successfully! Thank you for your contribution.');
 
-      // Optionally, clear the form fields after successful submission
+      // Clear form fields after successful submission
       setFullName('');
       setCity('');
       setProblemType('');
       setDescription('');
       setImage(null);
       setLocation({ lat: null, lng: null });
-      // You might need to add a way to clear LocationPicker or reset its state if it holds internal state
-      // For file input, resetting its value requires a ref or re-rendering the input,
-      // but setting image(null) clears the state.
+      // To clear file input, you might need a ref:
+      // if (fileInputRef.current) fileInputRef.current.value = '';
+
     } catch (error) {
       console.error('Error submitting report:', error);
-      alert(`Error submitting report: ${error.message}`);
+      setErrorMessage(`Error submitting report: ${error.message}`);
+    } finally {
+      setIsLoading(false); // End loading state regardless of success or failure
     }
   };
 
@@ -104,7 +121,20 @@ const Signalez = () => {
     <>
       <div className='bg-white p-10 mx-auto border-2 border-black m-10 flex flex-col font-mono text-lg text-center justify-center w-screen max-w-5xl h-full'>
         <h2 className="text-2xl font-bold mb-8">Report a Problem</h2>
-        <form onSubmit={handleSubmit}> {/* Changed to onSubmit for the form */}
+
+        {/* Display success/error messages */}
+        {successMessage && (
+          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <span className="block sm:inline">{successMessage}</span>
+          </div>
+        )}
+        {errorMessage && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <span className="block sm:inline">{errorMessage}</span>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit}>
           <div className='flex flex-row items-center justify-between mb-6'>
             <label className='w-1/3 text-left ml-4'>Full Name</label>
             <input
@@ -125,7 +155,7 @@ const Signalez = () => {
               placeholder="Enter your city"
               type="text"
               value={city}
-              onChange={(e) => setCity(e.target.value)} // Keep direct input possible
+              onChange={(e) => setCity(e.target.value)}
             />
           </div>
 
@@ -137,7 +167,7 @@ const Signalez = () => {
               placeholder="E.g. Road damage, broken light..."
               type="text"
               value={problemType}
-              onChange={(e) => setProblemType(e.target.value)} // Updated to map to category
+              onChange={(e) => setProblemType(e.target.value)}
             />
           </div>
 
@@ -159,7 +189,9 @@ const Signalez = () => {
               className='w-2/3'
               type="file"
               accept="image/*"
-              onChange={handleFileChange} // Handle file selection
+              onChange={handleFileChange}
+              // You might want to add a ref here to clear the file input:
+              // ref={fileInputRef}
             />
           </div>
 
@@ -167,7 +199,12 @@ const Signalez = () => {
             <LocationPicker onLocationChange={handleLocationChange} />
           </div>
 
-          <GsapButton text="Submit Report" darkMode={true} type="submit" /> {/* Changed to type="submit" */}
+          <GsapButton
+            text={isLoading ? 'Submitting...' : 'Submit Report'} // Change button text
+            darkMode={true}
+            type="submit"
+            disabled={isLoading} // Disable button while loading
+          />
         </form>
       </div>
       <Footer />
