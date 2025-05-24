@@ -8,13 +8,11 @@ import CreateAccount from "./frontend/pages/CreateAccount";
 import Signalez from "./frontend/pages/Signalez";
 import ForgetPasswd from "./frontend/pages/ForgetPasswd";
 import UrbanIssuesPage from './frontend/pages/UrbanIssuesPage';
-import Login from "./frontend/components/Login";
 import 'leaflet/dist/leaflet.css'
 import LocationPicker from "./frontend/components/LocationPicker";
 import UrbanIssueCard from "./frontend/components/UrbanIssueCard";
 import IssueFilters from "./frontend/components/IssueFilers";
-import mockUrbanIssues from "./frontend/components/mockUrbanIssues";
-
+import ResetPassword from "./frontend/pages/ResetPassword";
 
 
 
@@ -31,6 +29,7 @@ function App() {
           <Route path='/UrbanIssuesPage' element={<UrbanIssuesPage/>} />
           <Route path='/UrbanIssueCard' element={<UrbanIssueCard/>} />
           <Route path='/ForgetPasswd' element={<ForgetPasswd/>} />
+          <Route path="/resetpassword" element={<ResetPassword />} />
           <Route path='/IssueFilters' element={<IssueFilters/>} />
           <Route path='/mockUrbanIssues' element={<mockUrbanIssues/>} />
           <Route path='*' element={<NotFound />} />

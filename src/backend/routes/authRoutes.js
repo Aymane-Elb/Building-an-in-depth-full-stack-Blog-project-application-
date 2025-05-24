@@ -1,12 +1,24 @@
+// src/backend/routes/authRoutes.js
 const express = require('express');
 const router = express.Router();
-const { registerUser, loginUser, getMe } = require('../controllers/authController');
+const {
+    registerUser,
+    loginUser,
+    getMe,
+    forgotPassword, // <--- NEW: Import new functions
+    resetPassword   // <--- NEW: Import new functions
+} = require('../controllers/authController');
 const { protect } = require('../middleware/authMiddleware');
 
-
-router.post('/register', registerUser); 
+// Public Routes
+router.post('/register', registerUser);
 router.post('/login', loginUser);
 
-router.get('/me', protect, getMe); 
+// Protected Route
+router.get('/me', protect, getMe);
+
+// NEW ROUTES FOR PASSWORD RESET
+router.post('/forgotpassword', forgotPassword); // Endpoint to request a password reset code
+router.put('/resetpassword/:resetToken', resetPassword); // Endpoint to submit new password with the code
 
 module.exports = router;

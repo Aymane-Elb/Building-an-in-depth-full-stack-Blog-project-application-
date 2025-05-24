@@ -1,7 +1,8 @@
+// src/backend/controllers/reportController.js
 const Report = require('../models/Report');
-const User = require('../models/User');
+const User = require('../models/User'); // Ensure User is needed here, otherwise remove
 const asyncHandler = require('../middleware/asyncHandler');
-const cloudinary = require('../config/cloudinaryConfig');
+const cloudinary = require('../config/cloudinaryConfig'); // Ensure cloudinary config is correct
 
 // @desc    Fetch all reports
 // @route   GET /api/reports
@@ -41,7 +42,7 @@ const createReport = asyncHandler(async (req, res) => {
     // --- Input Validation ---
     if (!problemType || !description || !city || !locationString) {
         res.status(400);
-        throw new Error('Please provide problem type, description, city, and location.');
+        throw new new Error('Please provide problem type, description, city, and location.');
     }
 
     let location = null;
