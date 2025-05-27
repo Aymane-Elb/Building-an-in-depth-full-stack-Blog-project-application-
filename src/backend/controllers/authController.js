@@ -77,7 +77,7 @@ const loginUser = asyncHandler(async (req, res, next) => {
         });
         console.log(`User logged in: ${user.email}`);
     } else {
-        res.status(401); // Unauthorized
+        res.status(401); 
         return next(new Error('Invalid email or password.'));
     }
 });

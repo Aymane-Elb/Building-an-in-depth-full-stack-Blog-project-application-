@@ -1,8 +1,8 @@
 // src/backend/controllers/reportController.js
 const Report = require('../models/Report');
-const User = require('../models/User'); // Ensure User is needed here, otherwise remove
+const User = require('../models/User');
 const asyncHandler = require('../middleware/asyncHandler');
-const cloudinary = require('../config/cloudinaryConfig'); // Ensure cloudinary config is correct
+const cloudinary = require('../config/cloudinaryConfig');
 
 const getReports = asyncHandler(async (req, res) => {
     const reports = await Report.find({})
@@ -27,13 +27,13 @@ const createReport = asyncHandler(async (req, res) => {
         problemType,
         description,
         city,
-        location: locationString // Expecting a JSON string from frontend
+        location: locationString
     } = req.body;
 
-    // --- Input Validation ---
+    // Input Validation
     if (!problemType || !description || !city || !locationString) {
         res.status(400);
-        throw new new Error('Please provide problem type, description, city, and location.');
+        throw new Error('Please provide problem type, description, city, and location.'); // Fixed: removed extra 'new'
     }
 
     let location = null;
@@ -42,7 +42,7 @@ const createReport = asyncHandler(async (req, res) => {
         if (parsedLocation.lat != null && parsedLocation.lng != null) {
             location = {
                 type: 'Point',
-                coordinates: [parsedLocation.lng, parsedLocation.lat], // MongoDB expects [longitude, latitude]
+                coordinates: [parsedLocation.lng, parsedLocation.lat],
                 address: city
             };
         } else {
@@ -60,6 +60,9 @@ const createReport = asyncHandler(async (req, res) => {
             try {
                 const result = await cloudinary.uploader.upload(`data:${file.mimetype};base64,${file.buffer.toString('base64')}`, {
                     folder: 'urban-marine-reports',
+                    resource_type: 'image',
+                    quality: 'auto:good',
+                    fetch_format: 'auto'
                 });
                 uploadedImages.push({
                     url: result.secure_url,
@@ -74,23 +77,20 @@ const createReport = asyncHandler(async (req, res) => {
     }
 
     const report = await Report.create({
-        title: problemType, // Using problemType as title
+        title: problemType,
         description,
         location,
-        category: problemType, // Using problemType as category
+        category: problemType,
         images: uploadedImages,
-        submittedBy: req.user._id, // From protect middleware
+        submittedBy: req.user._id,
     });
 
     res.status(201).json(report);
 });
 
-// @desc    Update a report
-// @route   PUT /api/reports/:id
-// @access  Private (Reporter or Admin)
 const updateReport = asyncHandler(async (req, res) => {
     const {
-        problemType, // Maps to 'category' and potentially 'title'
+        problemType,
         description,
         city,
         location: locationString,
@@ -108,24 +108,20 @@ const updateReport = asyncHandler(async (req, res) => {
     const isAdmin = req.user.role === 'admin';
 
     if (!isOwner && !isAdmin) {
-        res.status(403); // Forbidden
+        res.status(403);
         throw new Error('Not authorized to update this report');
     }
 
-    // Update status (only admin can change to any, owner can change to specific if allowed)
     if (isAdmin && status) {
         report.status = status;
     } else if (isOwner && status && (status === 'Pending' || status === 'Received')) {
-        // Example: Owner can only change to 'Pending' or 'Received'
         report.status = status;
     }
 
-    // Update other fields if provided
     report.title = problemType !== undefined ? problemType : report.title;
     report.description = description !== undefined ? description : report.description;
     report.category = problemType !== undefined ? problemType : report.category;
 
-    // Handle location update
     if (locationString) {
         try {
             const parsedLocation = JSON.parse(locationString);
@@ -146,13 +142,9 @@ const updateReport = asyncHandler(async (req, res) => {
     } else if (city !== undefined && report.location) {
         report.location.address = city;
     } else if (city !== undefined && !report.location) {
-        // If no existing location but city is provided, create a basic location object
         report.location = { type: 'Point', coordinates: [], address: city };
     }
 
-    // IMPORTANT: This PUT endpoint does NOT handle new image uploads.
-    // To add or remove images, consider separate POST/DELETE endpoints
-    // like /api/reports/:id/images (POST to add), /api/reports/:id/images/:imageId (DELETE to remove).
     if (req.files && req.files.length > 0) {
         console.warn("New image uploads ignored in PUT /api/reports/:id. Implement separate image management endpoints.");
         res.status(400);
@@ -179,7 +171,6 @@ const deleteReport = asyncHandler(async (req, res) => {
         throw new Error('Not authorized to delete this report');
     }
 
-    // Delete images from Cloudinary
     if (report.images && report.images.length > 0) {
         for (const image of report.images) {
             try {
