@@ -4,18 +4,12 @@ const User = require('../models/User'); // Ensure User is needed here, otherwise
 const asyncHandler = require('../middleware/asyncHandler');
 const cloudinary = require('../config/cloudinaryConfig'); // Ensure cloudinary config is correct
 
-// @desc    Fetch all reports
-// @route   GET /api/reports
-// @access  Public
 const getReports = asyncHandler(async (req, res) => {
     const reports = await Report.find({})
         .populate('submittedBy', 'username email');
     res.json(reports);
 });
 
-// @desc    Fetch single report by ID
-// @route   GET /api/reports/:id
-// @access  Public
 const getReportById = asyncHandler(async (req, res) => {
     const report = await Report.findById(req.params.id)
         .populate('submittedBy', 'username email');
@@ -28,12 +22,9 @@ const getReportById = asyncHandler(async (req, res) => {
     }
 });
 
-// @desc    Create a new report
-// @route   POST /api/reports
-// @access  Private
 const createReport = asyncHandler(async (req, res) => {
     const {
-        problemType, // This will be the title and category
+        problemType,
         description,
         city,
         location: locationString // Expecting a JSON string from frontend
@@ -172,9 +163,6 @@ const updateReport = asyncHandler(async (req, res) => {
     res.json(updatedReport);
 });
 
-// @desc    Delete a report
-// @route   DELETE /api/reports/:id
-// @access  Private (Reporter or Admin)
 const deleteReport = asyncHandler(async (req, res) => {
     const report = await Report.findById(req.params.id);
 
@@ -199,7 +187,6 @@ const deleteReport = asyncHandler(async (req, res) => {
                 console.log(`Deleted image from Cloudinary: ${image.public_id}`);
             } catch (error) {
                 console.error(`Failed to delete image ${image.public_id} from Cloudinary:`, error);
-                // Continue with report deletion even if image deletion fails for one image
             }
         }
     }
@@ -208,9 +195,6 @@ const deleteReport = asyncHandler(async (req, res) => {
     res.json({ message: 'Report removed successfully' });
 });
 
-// @desc    Get reports by the logged-in user
-// @route   GET /api/reports/my-reports
-// @access  Private (User or Admin)
 const getMyReports = asyncHandler(async (req, res) => {
     const reports = await Report.find({ submittedBy: req.user._id })
         .populate('submittedBy', 'username email');

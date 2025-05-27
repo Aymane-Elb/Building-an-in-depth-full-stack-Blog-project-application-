@@ -1,12 +1,11 @@
-// src/backend/routes/authRoutes.js
 const express = require('express');
 const router = express.Router();
 const {
     registerUser,
     loginUser,
     getMe,
-    forgotPassword, // <--- NEW: Import new functions
-    resetPassword   // <--- NEW: Import new functions
+    forgotPassword, 
+    resetPassword   
 } = require('../controllers/authController');
 const { protect } = require('../middleware/authMiddleware');
 

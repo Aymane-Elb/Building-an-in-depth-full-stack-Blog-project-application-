@@ -1,159 +1,154 @@
 // src/frontend/pages/ResetPassword.jsx
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { Eye, EyeOff } from 'lucide-react'; // Assuming you have lucide-react installed
+import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import GsapButton from '../components/GsapButton';
 
 const ResetPassword = () => {
-  const [resetCode, setResetCode] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+    const { resetToken } = useParams();
+    const navigate = useNavigate();
+    
+    const [formData, setFormData] = useState({
+        code: '',
+        password: '',
+        confirmPassword: ''
+    });
+    const [message, setMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
-  const navigate = useNavigate();
-  const location = useLocation(); // To get URL parameters
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
+    };
 
-  // On component mount, try to extract the token from the URL query parameters
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const token = params.get('token');
-    if (token) {
-      setResetCode(token); // Pre-fill the reset code if it's in the URL
-      setMessage('Reset code found in URL. Please enter your new password.');
-    }
-  }, [location.search]);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+        setMessage('');
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setMessage('');
-    setError('');
+        // Validate passwords match
+        if (formData.password !== formData.confirmPassword) {
+            setMessage('Error: Passwords do not match');
+            setIsLoading(false);
+            return;
+        }
 
-    if (newPassword !== confirmPassword) {
-      setError('New passwords do not match!');
-      return;
-    }
+        // Validate password strength
+        if (formData.password.length < 6) {
+            setMessage('Error: Password must be at least 6 characters long');
+            setIsLoading(false);
+            return;
+        }
 
-    if (!resetCode) {
-      setError('Please enter the reset code.');
-      return;
-    }
+        try {
+            const response = await fetch(`http://localhost:5000/api/auth/resetpassword/${resetToken}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    code: formData.code,
+                    password: formData.password
+                }),
+            });
 
-    if (newPassword.length < 6) {
-      setError('Password must be at least 6 characters long.');
-      return;
-    }
+            const data = await response.json();
 
-    try {
-      const response = await fetch(`http://localhost:5000/api/auth/resetpassword/${resetCode}`, {
-        method: 'PUT', // Use PUT for updating the password
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ password: newPassword }), // Send only the new password
-      });
+            if (!response.ok) {
+                throw new Error(data.message || 'Something went wrong. Please try again.');
+            }
 
-      const data = await response.json();
+            setMessage('Password reset successful! You have been logged in.');
+            
+            // Store token if user is automatically logged in
+            if (data.token) {
+                localStorage.setItem('token', data.token);
+            }
 
-      if (!response.ok) {
-        throw new Error(data.message || 'Password reset failed');
-      }
+            // Redirect to dashboard or login after successful reset
+            setTimeout(() => {
+                navigate('/dashboard'); // or wherever you want to redirect
+            }, 2000);
 
-      setMessage(data.message || 'Your password has been reset successfully!');
-      setResetCode('');
-      setNewPassword('');
-      setConfirmPassword('');
+        } catch (error) {
+            console.error('Error resetting password:', error);
+            setMessage(`Error: ${error.message}`);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
-      // Redirect to login page after a short delay
-      setTimeout(() => {
-        navigate('/login'); // Assuming your login page is at /login
-      }, 3000);
+    return (
+        <div className="sticky max-w-md mx-auto bg-white p-10 item-center justify-center rounded-2xl shadow-2xl mt-20">
+            <h2 className="text-3xl font-black mb-8 text-center text-black">Reset Password</h2>
+            <form onSubmit={handleSubmit}>
+                <div className="space-y-6">
+                    <div className="flex flex-col">
+                        <label className="text-sm font-normal text-black mb-1">Reset Code</label>
+                        <input
+                            type="text"
+                            name="code"
+                            placeholder="Enter 6-digit code"
+                            className="bg-transparent focus:outline-none border border-yellow-300 rounded-md py-2 px-3 text-black font-black focus:ring-2 focus:ring-yellow-400"
+                            value={formData.code}
+                            onChange={handleChange}
+                            maxLength="6"
+                            required
+                        />
+                        <p className="text-xs text-gray-600 mt-1">Enter the 6-digit code sent to your email</p>
+                    </div>
 
-    } catch (err) {
-      console.error('Error resetting password:', err);
-      setError(`Error: ${err.message}`);
-    }
-  };
+                    <div className="flex flex-col">
+                        <label className="text-sm font-normal text-black mb-1">New Password</label>
+                        <input
+                            type="password"
+                            name="password"
+                            placeholder="Enter new password"
+                            className="bg-transparent focus:outline-none border border-yellow-300 rounded-md py-2 px-3 text-black font-black focus:ring-2 focus:ring-yellow-400"
+                            value={formData.password}
+                            onChange={handleChange}
+                            minLength="6"
+                            required
+                        />
+                    </div>
 
-  return (
-    <div className="sticky max-w-md mx-auto bg-white p-10 item-center justify-center rounded-2xl shadow-2xl mt-20">
-      <h2 className="text-3xl font-black mb-8 text-center text-black">Reset Password</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="space-y-6">
-          {/* Reset Code Input */}
-          <div className="flex flex-col">
-            <label className="text-sm font-normal text-black mb-1">Reset Code</label>
-            <input
-              type="text"
-              placeholder="Enter the code from your email"
-              className="bg-transparent focus:outline-none border border-yellow-300 rounded-md py-2 px-3 text-black font-black focus:ring-2 focus:ring-yellow-400"
-              value={resetCode}
-              onChange={(e) => setResetCode(e.target.value)}
-              required
-            />
-          </div>
+                    <div className="flex flex-col">
+                        <label className="text-sm font-normal text-black mb-1">Confirm Password</label>
+                        <input
+                            type="password"
+                            name="confirmPassword"
+                            placeholder="Confirm new password"
+                            className="bg-transparent focus:outline-none border border-yellow-300 rounded-md py-2 px-3 text-black font-black focus:ring-2 focus:ring-yellow-400"
+                            value={formData.confirmPassword}
+                            onChange={handleChange}
+                            minLength="6"
+                            required
+                        />
+                    </div>
 
-          {/* New Password Input */}
-          <div className="flex flex-col relative">
-            <label className="text-sm font-normal text-black mb-1">New Password</label>
-            <div className="relative">
-              <input
-                type={showNewPassword ? 'text' : 'password'}
-                placeholder="********"
-                className="w-full bg-transparent focus:outline-none border border-yellow-300 rounded-md py-2 px-3 text-black font-black focus:ring-2 focus:ring-yellow-400"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowNewPassword(!showNewPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-yellow-300 hover:text-yellow-300"
-              >
-                {showNewPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
-          </div>
+                    {message && (
+                        <p className={`text-center text-sm mt-4 p-2 rounded-md ${
+                            message.includes('Error') 
+                                ? 'bg-red-100 text-red-700' 
+                                : 'bg-green-100 text-green-700'
+                        }`}>
+                            {message}
+                        </p>
+                    )}
 
-          {/* Confirm New Password Input */}
-          <div className="flex flex-col relative">
-            <label className="text-sm font-normal text-black mb-1">Confirm New Password</label>
-            <div className="relative">
-              <input
-                type={showConfirmPassword ? 'text' : 'password'}
-                placeholder="********"
-                className="w-full bg-transparent focus:outline-none border border-yellow-300 rounded-md py-2 px-3 text-black font-black focus:ring-2 focus:ring-yellow-400"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-yellow-300 hover:text-yellow-300"
-              >
-                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
-          </div>
-
-          {/* Display messages */}
-          {message && <p className="text-center text-sm mt-4 p-2 rounded-md bg-green-100 text-green-700">{message}</p>}
-          {error && <p className="text-center text-sm mt-4 p-2 rounded-md bg-red-100 text-red-700">{error}</p>}
-
-          <div className="mt-8 flex justify-center">
-            <GsapButton
-              text={'Reset Password'}
-              darkMode={true}
-              type="submit"
-            />
-          </div>
+                    <div className="mt-8 flex justify-center">
+                        <GsapButton
+                            text={isLoading ? 'Resetting...' : 'Reset Password'}
+                            darkMode={true}
+                            type="submit"
+                            disabled={isLoading}
+                        />
+                    </div>
+                </div>
+            </form>
         </div>
-      </form>
-    </div>
-  );
+    );
 };
 
 export default ResetPassword;

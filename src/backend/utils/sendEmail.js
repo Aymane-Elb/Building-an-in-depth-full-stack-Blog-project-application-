@@ -1,29 +1,27 @@
-// src/backend/utils/sendEmail.js
 const nodemailer = require('nodemailer');
 
 const sendEmail = async (options) => {
     // 1) Create a transporter
-    // You can use a more robust service like SendGrid, Mailgun, or configure SMTP directly
-    // For Gmail, enable "App passwords" in your Google Account security settings
-    // and use that password here, not your regular Gmail password.
     const transporter = nodemailer.createTransport({
-        service: process.env.EMAIL_SERVICE, // e.g., 'gmail', 'SendGrid', 'Mailgun'
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true,
         auth: {
-            user: process.env.EMAIL_USERNAME, // Your email address
-            pass: process.env.EMAIL_PASSWORD  // Your email password or App Password
+            user: process.env.EMAIL_USERNAME,
+            pass: process.env.EMAIL_PASSWORD
         }
     });
 
     // 2) Define the email options
-    const mailOptions = {
-        from: `<span class="math-inline">\{process\.env\.FROM\_NAME\} <</span>{process.env.FROM_EMAIL}>`, // e.g., 'Urban Signalez Support <support@urbainsignalez.com>'
+   const mailOptions = {
+        from: `Signalez <${process.env.EMAIL_USERNAME}>`, // Use EMAIL_USERNAME instead
         to: options.email,
         subject: options.subject,
         text: options.message,
-        // html: options.html // You can also send HTML emails if desired
-    };
+        html: options.html
+};
 
-    // 3) Actually send the email
+    // 3) Send the email
     await transporter.sendMail(mailOptions);
 };
 

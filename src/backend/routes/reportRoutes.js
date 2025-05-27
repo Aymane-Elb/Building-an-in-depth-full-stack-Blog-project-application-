@@ -1,4 +1,3 @@
-// src/backend/routes/reportRoutes.js
 const express = require('express');
 const router = express.Router();
 const {
@@ -8,18 +7,16 @@ const {
     updateReport,
     deleteReport,
     getMyReports,
-} = require('../controllers/reportController'); // Import from the new reportController
+} = require('../controllers/reportController'); 
 
-const { protect } = require('../middleware/authMiddleware'); // Assuming you have this middleware
+const { protect } = require('../middleware/authMiddleware'); 
 
 // Public Routes
 router.get('/', getReports);
 router.get('/:id', getReportById);
 
-// Protected Routes
-router.post('/', protect, createReport); // Requires authentication to create
-router.put('/:id', protect, updateReport); // Requires authentication to update
-router.delete('/:id', protect, deleteReport); // Requires authentication to delete
-router.get('/my-reports', protect, getMyReports); // Requires authentication to get user's reports
-
+router.post('/', protect, createReport);
+router.put('/:id', protect, updateReport); 
+router.delete('/:id', protect, deleteReport); 
+router.get('/my-reports', protect, getMyReports);
 module.exports = router;

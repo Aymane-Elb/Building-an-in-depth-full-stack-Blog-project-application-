@@ -10,19 +10,14 @@ const generateToken = (id) => {
     });
 };
 
-// @desc    Register a new user
-// @route   POST /api/auth/register
-// @access  Public
 const registerUser = asyncHandler(async (req, res, next) => {
     const { username, email, password, phoneNumber } = req.body;
 
-    // Basic Input Validation
     if (!username || !email || !password) {
         res.status(400);
         return next(new Error('Please provide username, email, and password.'));
     }
 
-    // Check if user exists
     const userExists = await User.findOne({ email });
     if (userExists) {
         res.status(409); // Conflict
@@ -57,20 +52,15 @@ const registerUser = asyncHandler(async (req, res, next) => {
     }
 });
 
-// @desc    Authenticate user & get token
-// @route   POST /api/auth/login
-// @access  Public
 const loginUser = asyncHandler(async (req, res, next) => {
     const { email, password } = req.body;
 
-    // Input Validation
     if (!email || !password) {
         res.status(400);
         return next(new Error('Please enter both email and password.'));
     }
 
-    // Check for user email and password
-    const user = await User.findOne({ email }).select('+password'); // Explicitly select password for comparison
+    const user = await User.findOne({ email }).select('+password'); 
 
     if (user && (await user.matchPassword(password))) {
         res.status(200).json({
@@ -92,9 +82,6 @@ const loginUser = asyncHandler(async (req, res, next) => {
     }
 });
 
-// @desc    Get user profile
-// @route   GET /api/auth/me
-// @access  Private
 const getMe = asyncHandler(async (req, res) => {
     // req.user is set by the protect middleware from the token
     res.status(200).json({
@@ -104,58 +91,83 @@ const getMe = asyncHandler(async (req, res) => {
     });
 });
 
-// @desc    Forgot Password - Request a password reset token
-// @route   POST /api/auth/forgotpassword
-// @access  Public
 const forgotPassword = asyncHandler(async (req, res, next) => {
     const { email } = req.body;
 
     const user = await User.findOne({ email });
 
     if (!user) {
-        // IMPORTANT: For security, always send a generic success message even if email not found.
-        // This prevents attackers from enumerating valid email addresses.
-        return res.status(200).json({ success: true, message: 'If an account with that email exists, a password reset code has been sent to your email.' });
+        return res.status(200).json({ 
+            success: true, 
+            message: 'If an account with that email exists, a password reset code has been sent to your email.' 
+        });
     }
 
-    // --- DEBUGGING LINES START ---
-    console.log('--- Debugging forgotPassword ---');
-    console.log('User found:', user.email);
-    console.log('Is user.getResetPasswordToken a function?', typeof user.getResetPasswordToken);
-    if (typeof user.getResetPasswordToken !== 'function') {
-        console.error('CRITICAL ERROR: user.getResetPasswordToken is NOT a function!');
-        console.error('Available methods on user object prototype:', Object.keys(Object.getPrototypeOf(user)));
-        // You might want to throw an error here, or return a 500
-        res.status(500);
-        return next(new Error('Server configuration error: Password reset function not found.'));
-    }
-    console.log('--- Debugging forgotPassword END ---');
-    // --- DEBUGGING LINES END ---
+    // Generate reset token and 6-digit code
+    const resetData = user.getResetPasswordToken();
+    await user.save({ validateBeforeSave: false });
 
-    // Get reset token from user model method
-    const resetToken = user.getResetPasswordToken();
-    await user.save({ validateBeforeSave: false }); // Save user with the new token and expiry
+    // CRITICAL DEBUG - Check what we're getting
+    console.log('=== RESET DEBUG START ===');
+    console.log('resetData full object:', resetData);
+    console.log('resetData.code:', resetData.code);
+    console.log('resetData.code type:', typeof resetData.code);
+    console.log('resetData.token:', resetData.token);
+    console.log('resetData.token type:', typeof resetData.token);
+    console.log('=== RESET DEBUG END ===');
 
-    // Create reset URL or message with the token
-    // For this flow, we'll send the raw token as a "code" to be entered by the user.
-    const message = `You are receiving this email because you (or someone else) has requested the reset of a password for your account. Your password reset code is:\n\n${resetToken}\n\nThis code is valid for 10 minutes. If you did not request this, please ignore this email.`;
+    // Extract the values properly
+    const resetCode = resetData.code;
+    const resetToken = resetData.token;
+
+    // Verify they are strings
+    console.log('Final resetCode:', resetCode, 'Type:', typeof resetCode);
+    console.log('Final resetToken:', resetToken, 'Type:', typeof resetToken);
+
+    const message = `You are receiving this email because you (or someone else) has requested the reset of a password for your account.
+
+Your password reset code is: ${resetCode}
+
+This code is valid for 10 minutes. If you did not request this, please ignore this email.`;
+
+    const htmlMessage = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #333;">Password Reset Request</h2>
+            <p>You are receiving this email because you (or someone else) has requested a password reset for your account.</p>
+            <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center; margin: 20px 0;">
+                <h3 style="color: #007bff; margin: 0;">Your Reset Code:</h3>
+                <h1 style="color: #333; letter-spacing: 2px; margin: 10px 0; font-size: 32px;">${resetCode}</h1>
+                <p style="color: #666; margin: 0;">This code will expire in 10 minutes.</p>
+            </div>
+            <p>If you did not request this, please ignore this email and your password will remain unchanged.</p>
+        </div>
+    `;
 
     try {
+        // Log what we're sending
+        console.log('About to send email with message:', message);
+        console.log('Email HTML contains code:', htmlMessage.includes(resetCode));
+
         await sendEmail({
             email: user.email,
             subject: 'Password Reset Request for Urban Signalez',
-            message
+            message,
+            html: htmlMessage
         });
 
         res.status(200).json({
             success: true,
-            message: 'If an account with that email exists, a password reset code has been sent to your email.'
+            message: 'If an account with that email exists, a password reset code has been sent to your email.',
+            resetToken: resetToken // Send token for frontend navigation
         });
+        
         console.log(`Password reset email sent to: ${user.email}`);
+        console.log(`Reset code sent: ${resetCode}`);
+        
     } catch (err) {
         console.error('Email sending error:', err);
-        // Clear the token if email sending fails to prevent a stale token
         user.passwordResetToken = undefined;
+        user.passwordResetCode = undefined;
         user.passwordResetExpires = undefined;
         await user.save({ validateBeforeSave: false });
 
@@ -164,50 +176,65 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
     }
 });
 
-// @desc    Reset Password - Update password using the reset token
-// @route   PUT /api/auth/resetpassword/:resetToken
-// @access  Public
 const resetPassword = asyncHandler(async (req, res, next) => {
-    // Get hashed token from URL parameter
     const tokenFromUrl = req.params.resetToken;
-    const hashedToken = crypto.createHash('sha256').update(tokenFromUrl).digest('hex');
+    const { code, password: newPassword } = req.body;
 
-    // Find user by hashed token and check expiry
+    if (!code || !newPassword) {
+        res.status(400);
+        return next(new Error('Please provide both reset code and new password.'));
+    }
+
+    // Hash the token from URL to compare with stored token
+    const hashedToken = crypto.createHash('sha256').update(tokenFromUrl).digest('hex');
+    
+    // Hash the provided code to compare with stored code
+    const hashedCode = crypto.createHash('sha256').update(String(code)).digest('hex');
+
     const user = await User.findOne({
         passwordResetToken: hashedToken,
-        passwordResetExpires: { $gt: Date.now() } // $gt means "greater than" (i.e., not expired)
+        passwordResetCode: hashedCode,
+        passwordResetExpires: { $gt: Date.now() }
     });
 
     if (!user) {
         res.status(400);
-        return next(new Error('Invalid or expired password reset token.'));
+        return next(new Error('Invalid or expired password reset code.'));
     }
 
-    // Set new password from request body
-    if (!req.body.password) {
-        res.status(400);
-        return next(new Error('Please provide a new password.'));
-    }
-    // Basic password strength check (optional, but good practice)
-    if (req.body.password.length < 6) {
+    // Basic password strength check
+    if (newPassword.length < 6) {
         res.status(400);
         return next(new Error('New password must be at least 6 characters long.'));
     }
-    user.password = req.body.password; // Mongoose pre-save hook will hash this new password
 
-    // Clear reset token fields after successful reset
+    // Set new password
+    user.password = newPassword;
+    
+    // Clear reset fields
     user.passwordResetToken = undefined;
+    user.passwordResetCode = undefined;
     user.passwordResetExpires = undefined;
 
-    await user.save(); // Save the user with the new hashed password
+    await user.save();
+
+    // Generate new token for immediate login
+    const token = generateToken(user._id);
 
     res.status(200).json({
         success: true,
-        message: 'Password has been successfully reset. You can now log in with your new password.'
+        message: 'Password has been successfully reset.',
+        token,
+        data: {
+            _id: user._id,
+            username: user.username,
+            email: user.email,
+            phoneNumber: user.phoneNumber,
+            role: user.role
+        }
     });
     console.log(`User password reset for: ${user.email}`);
 });
-
 
 module.exports = {
     registerUser,
