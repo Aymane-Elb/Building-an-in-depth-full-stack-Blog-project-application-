@@ -165,33 +165,7 @@ const Signalez = () => {
       <div className='bg-white p-10 mx-auto border-2 border-black m-10 flex flex-col font-mono text-lg text-center justify-center w-screen max-w-5xl h-full'>
         <h2 className="text-2xl font-bold mb-8">Report a Problem</h2>
 
-        {process.env.NODE_ENV === 'development' && (
-          <div className="bg-gray-100 p-3 mb-4 text-xs text-left rounded border">
-            <strong>DEBUG INFO:</strong><br/>
-            <div className="grid grid-cols-2 gap-2 mt-2">
-              <div>
-                <strong>Auth:</strong><br/>
-                • Token: {getAuthToken() ? 'Present' : 'Missing'}<br/>
-                • userToken: {localStorage.getItem('userToken') ? '✅' : '❌'}<br/>
-              </div>
-              <div>
-                <strong>Form Data:</strong><br/>
-                • Location: {location.lat && location.lng ? 'Selected' : 'Missing'}<br/>
-                • Image: {image ? `Selected: ${image.name}` : 'None'}<br/>
-              </div>
-            </div>
-            {location.lat && location.lng && (
-              <div className="mt-2">
-                <strong>Coordinates:</strong> {location.lat.toFixed(6)}, {location.lng.toFixed(6)}
-              </div>
-            )}
-            <div className="mt-2">
-              <strong>Upload Method:</strong> Direct FormData to backend<br/>
-              • Backend handles Cloudinary upload
-            </div>
-          </div>
-        )}
-
+     
         {successMessage && (
           <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
             <strong className="font-bold">Success! </strong>

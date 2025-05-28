@@ -18,7 +18,7 @@ const mockUrbanIssues = [
     id: "2", // Added unique ID
     name: "eclairage-defectueux-parc-central",
     title: "Éclairage défectueux au Parc Central",
-    thumbnail: "/images/damage2.jpeg", // This path looks correct if the image exists
+    thumbnail: "/images/damage2.jpg", // This path looks correct if the image exists
     category: "Éclairage Public",
     date: "1 mai 2025",
     location: "Parc Central, entrée nord",
@@ -33,7 +33,7 @@ const mockUrbanIssues = [
     id: "3", // Added unique ID
     name: "graffiti-ecole-primaire",
     title: "Graffitis sur le mur de l'école primaire",
-    thumbnail: "/images/graffiti.jpg", // <--- CHANGED THIS PATH
+    thumbnail: "/images/damage1.jpg", 
     category: "Propreté",
     date: "30 avril 2025",
     location: "École Jean Moulin, Rue des Lilas",
@@ -49,7 +49,7 @@ const mockUrbanIssues = [
     id: "4", // Added unique ID
     name: "trottoir-endommage",
     title: "Trottoir endommagé près du marché",
-    thumbnail: "/images/sidewalk.jpg", // <--- New image
+    thumbnail: "/images/damage1.jpg", // <--- New image
     category: "Voirie",
     date: "10 mai 2025",
     location: "Rue du Commerce, devant le marché",
