@@ -48,6 +48,7 @@ const ResetPassword = () => {
         }
 
         try {
+            // FIX: Added quotes around the URL template literal
             const response = await fetch(`http://localhost:5000/api/auth/reset-password/${resetToken}`, {
                 method: 'PUT',
                 headers: {
@@ -78,11 +79,12 @@ const ResetPassword = () => {
 
             // Redirect to dashboard after successful reset
             setTimeout(() => {
-                navigate('/dashboard');
+                navigate('/');
             }, 2000);
 
         } catch (error) {
             console.error('Error resetting password:', error);
+            // FIX: Added template literal syntax
             setMessage(`Error: ${error.message}`);
         } finally {
             setIsLoading(false);

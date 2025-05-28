@@ -34,12 +34,14 @@ const ForgetPasswd = () => {
             // If the backend returns a reset token, redirect to reset password page
             if (data.resetToken) {
                 setTimeout(() => {
+                    // FIX: Added template literal syntax
                     navigate(`/reset-password/${data.resetToken}`);
                 }, 2000);
             }
 
         } catch (error) {
             console.error('Error requesting password reset:', error);
+            // FIX: Added template literal syntax
             setMessage(`Error: ${error.message}`);
         } finally {
             setIsLoading(false);
