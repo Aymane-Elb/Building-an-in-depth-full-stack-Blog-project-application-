@@ -1,4 +1,3 @@
-// src/frontend/pages/ResetPassword.jsx
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import GsapButton from '../components/GsapButton';
@@ -41,8 +40,15 @@ const ResetPassword = () => {
             return;
         }
 
+        // Validate code format (6 digits)
+        if (!/^\d{6}$/.test(formData.code)) {
+            setMessage('Error: Reset code must be 6 digits');
+            setIsLoading(false);
+            return;
+        }
+
         try {
-            const response = await fetch(`http://localhost:5000/api/auth/resetpassword/${resetToken}`, {
+            const response = await fetch(`http://localhost:5000/api/auth/reset-password/${resetToken}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -64,11 +70,15 @@ const ResetPassword = () => {
             // Store token if user is automatically logged in
             if (data.token) {
                 localStorage.setItem('token', data.token);
+                // Also store user data if needed
+                if (data.user) {
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                }
             }
 
-            // Redirect to dashboard or login after successful reset
+            // Redirect to dashboard after successful reset
             setTimeout(() => {
-                navigate('/dashboard'); // or wherever you want to redirect
+                navigate('/dashboard');
             }, 2000);
 
         } catch (error) {
@@ -90,11 +100,13 @@ const ResetPassword = () => {
                             type="text"
                             name="code"
                             placeholder="Enter 6-digit code"
-                            className="bg-transparent focus:outline-none border border-yellow-300 rounded-md py-2 px-3 text-black font-black focus:ring-2 focus:ring-yellow-400"
+                            className="bg-transparent focus:outline-none border border-yellow-300 rounded-md py-2 px-3 text-black font-black focus:ring-2 focus:ring-yellow-400 text-center text-lg tracking-widest"
                             value={formData.code}
                             onChange={handleChange}
                             maxLength="6"
+                            pattern="\d{6}"
                             required
+                            disabled={isLoading}
                         />
                         <p className="text-xs text-gray-600 mt-1">Enter the 6-digit code sent to your email</p>
                     </div>
@@ -110,6 +122,7 @@ const ResetPassword = () => {
                             onChange={handleChange}
                             minLength="6"
                             required
+                            disabled={isLoading}
                         />
                     </div>
 
@@ -124,14 +137,15 @@ const ResetPassword = () => {
                             onChange={handleChange}
                             minLength="6"
                             required
+                            disabled={isLoading}
                         />
                     </div>
 
                     {message && (
-                        <p className={`text-center text-sm mt-4 p-2 rounded-md ${
+                        <p className={`text-center text-sm mt-4 p-3 rounded-md font-medium ${
                             message.includes('Error') 
-                                ? 'bg-red-100 text-red-700' 
-                                : 'bg-green-100 text-green-700'
+                                ? 'bg-red-100 text-red-700 border border-red-200' 
+                                : 'bg-green-100 text-green-700 border border-green-200'
                         }`}>
                             {message}
                         </p>
@@ -144,6 +158,17 @@ const ResetPassword = () => {
                             type="submit"
                             disabled={isLoading}
                         />
+                    </div>
+
+                    <div className="text-center mt-4">
+                        <button
+                            type="button"
+                            onClick={() => navigate('/forgot-password')}
+                            className="text-sm text-blue-600 hover:text-blue-800 underline"
+                            disabled={isLoading}
+                        >
+                            Didn't receive a code? Request new one
+                        </button>
                     </div>
                 </div>
             </form>

@@ -29,7 +29,7 @@ function App() {
           <Route path='/UrbanIssuesPage' element={<UrbanIssuesPage/>} />
           <Route path='/UrbanIssueCard' element={<UrbanIssueCard/>} />
           <Route path='/ForgetPasswd' element={<ForgetPasswd/>} />
-          <Route path="/resetpassword" element={<ResetPassword />} />
+          <Route path="/resetpassword/:resetToken" element={<ResetPassword />} />
           <Route path='/IssueFilters' element={<IssueFilters/>} />
           <Route path='/mockUrbanIssues' element={<mockUrbanIssues/>} />
           <Route path='*' element={<NotFound />} />

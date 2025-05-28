@@ -78,6 +78,7 @@ const Signalez = () => {
     setErrorMessage('');
     setUploadProgress(0);
 
+    // Validate required fields
     if (!city.trim() || !problemType.trim() || !description.trim() || location.lat === null || location.lng === null) {
       setErrorMessage('All fields including location are required.');
       return;
@@ -92,49 +93,54 @@ const Signalez = () => {
       return;
     }
 
-    const formData = new FormData();
-    formData.append('city', city.trim());
-    formData.append('problemType', problemType.trim());
-    formData.append('description', description.trim());
-    formData.append('location', JSON.stringify(location));
-    if (image) formData.append('image', image);
-
     try {
-      const response = await new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-
-        xhr.upload.addEventListener('progress', (e) => {
-          if (e.lengthComputable) {
-            const percent = Math.round((e.loaded / e.total) * 100);
-            setUploadProgress(Math.min(percent, 90));
-          }
-        });
-
-        xhr.addEventListener('load', () => {
-          setUploadProgress(100);
-          resolve(xhr);
-        });
-
-        xhr.addEventListener('error', () => reject(new Error('Network error')));
-        xhr.addEventListener('timeout', () => reject(new Error('Request timeout')));
-
-        xhr.open('POST', 'http://localhost:5000/api/reports');
-        xhr.setRequestHeader('Authorization', `Bearer ${token}`);
-        xhr.timeout = 30000;
-        xhr.send(formData);
-      });
-
-      if (response.status < 200 || response.status >= 300) {
-        const text = response.responseText;
-        let msg = `HTTP ${response.status}`;
-        try {
-          const err = JSON.parse(text);
-          msg = err.message || err.error || msg;
-        } catch {}
-        throw new Error(msg);
+      setUploadProgress(20);
+      
+      // Create FormData with all the report data
+      const formData = new FormData();
+      
+      // Add text fields - match the backend expectations
+      formData.append('title', city.trim()); // Using city as title for now
+      formData.append('category', problemType.trim());
+      formData.append('description', description.trim());
+      formData.append('address', city.trim());
+      
+      // Add location as JSON string
+      formData.append('location', JSON.stringify({
+        lat: location.lat,
+        lng: location.lng
+      }));
+      
+      // Add image file if present
+      if (image) {
+        formData.append('images', image); // Backend expects 'images' field name
+        setUploadProgress(40);
       }
 
-      setSuccessMessage('Report submitted successfully.');
+      setUploadProgress(60);
+
+      // Send everything to backend in one request
+      const response = await fetch('http://localhost:5000/api/reports', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          // Don't set Content-Type header - let browser set it for FormData
+        },
+        body: formData,
+      });
+
+      setUploadProgress(90);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || errorData.error || `HTTP ${response.status}: Failed to submit report`);
+      }
+
+      const result = await response.json();
+      setUploadProgress(100);
+      
+      // Success - clear form
+      setSuccessMessage('Report submitted successfully!');
       setCity('');
       setProblemType('');
       setDescription('');
@@ -142,8 +148,12 @@ const Signalez = () => {
       setImagePreview(null);
       setLocation({ lat: null, lng: null });
       if (fileInputRef.current) fileInputRef.current.value = '';
+
+      console.log('Report submitted successfully:', result);
+
     } catch (err) {
-      setErrorMessage(err.message || 'Unexpected error occurred.');
+      console.error('Submit error:', err);
+      setErrorMessage(err.message || 'An unexpected error occurred. Please try again.');
     } finally {
       setUploadProgress(0);
       setIsLoading(false);
@@ -175,6 +185,10 @@ const Signalez = () => {
                 <strong>Coordinates:</strong> {location.lat.toFixed(6)}, {location.lng.toFixed(6)}
               </div>
             )}
+            <div className="mt-2">
+              <strong>Upload Method:</strong> Direct FormData to backend<br/>
+              • Backend handles Cloudinary upload
+            </div>
           </div>
         )}
 
@@ -204,11 +218,13 @@ const Signalez = () => {
               </div>
             </div>
             <p className="text-sm text-gray-600 mt-2 text-center">
-              {uploadProgress < 50
+              {uploadProgress < 40
                 ? 'Preparing data...'
-                : uploadProgress < 90
-                  ? `Uploading... ${uploadProgress}%`
-                  : 'Processing on server...'}
+                : uploadProgress < 70
+                ? 'Uploading image...'
+                : uploadProgress < 95
+                  ? 'Saving report...'
+                  : 'Finalizing...'}
             </p>
           </div>
         )}
@@ -238,8 +254,8 @@ const Signalez = () => {
               <option value="Roads & Sidewalks">Roads & Sidewalks</option>
               <option value="Waste & Sanitation">Waste & Sanitation</option>
               <option value="Public Lighting">Public Lighting</option>
-              <option value="Green Spaces">Green Spaces</option>
               <option value="Water & Drainage">Water & Drainage</option>
+              <option value="Green Spaces">Green Spaces</option>
               <option value="Other">Other</option>
             </select>
           </div>
